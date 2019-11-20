@@ -4,7 +4,6 @@ const POKEMONS_URL = `${BASE_URL}/pokemons`
 
 document.addEventListener("DOMContentLoaded", ()=>{
     const main = document.querySelector('main');
-    let ul = document.createElement('ul')
 
     function getTrainers() {
         return fetch(TRAINERS_URL)
@@ -14,58 +13,134 @@ document.addEventListener("DOMContentLoaded", ()=>{
     }
 
     function renderTrainers(trainers){
-        // console.log(trainers.data)
         trainers.data.forEach(trainer => {
+            let ul = document.createElement('ul')
+            ul.id = "ul_poke"
             let div = document.createElement('div')
-            // let ul = document.createElement('ul')
-
-            div.setAttribute('class', 'card')
-            div.setAttribute('data-id', `${trainer.id}`)
+                div.setAttribute('class', 'card')
+                div.setAttribute('data-id', `${trainer.id}`)
 
             let par = document.createElement('p')
-            par.textContent = `${trainer.attributes["name"]}`
+                par.textContent = `${trainer.attributes["name"]}`
             let btnA = document.createElement('button')
-            btnA.setAttribute('data-trainer-id', `${trainer.id}`)
-            btnA.textContent = "Add Pokemon"
-            btnA.style.backgroundColor = '#008000'
-            
-            btnA.className = "release"
-            Object.values(trainer.relationships.pokemons).forEach(array => {
-                    console.log(array)
-                    array.forEach(poke_list => {
-                        // console.log(poke_list)
-                        // getPokemon(poke_list.id)
-                    })
-                })
-            //  console.log(ul)   
-            div.append(par, btnA, ul)
-            // div.appendChild(ul)
-            // trainer.id
-            // trainer.attributes["name"]
-            // trainer.relationships.pokemons
-
+                btnA.setAttribute('data-trainer-id', `${trainer.id}`)
+                btnA.textContent = "Add Pokemon"
+                btnA.style.backgroundColor = '#008000'
+                btnA.className = "add"
+            linebreak = document.createElement("br");
+    
+            renderPokemon(trainer.id, ul)
+        
+            div.append(par, btnA, linebreak, ul)
             main.appendChild(div)
-          })   
+          })  
+         
+
+
+          
     }
 
-    function getPokemon(id) {
-      return fetch(`${POKEMONS_URL}/${id}`)
+    function getPokemon(trainerid) {
+      return fetch(`${TRAINERS_URL}/${trainerid}`)
         .then(res => res.json())
-        .then(json => renderPokemon(json))
+        .then(json => json)
     }
 
-    function renderPokemon(pokemon) {
-        let att = pokemon.data.attributes
-        let li = document.createElement('li')
-        li.textContent = `${att['nickname']} (${att['species']})`;
-        // li.textContent = "hi"
-        ul.append(li)
-        // console.log(ul)
-        console.log(pokemon.data.attributes)
+    function renderPokemon(trainerid, ul) {
+        getPokemon(trainerid).then(json => {
+        pokemons = json.data.attributes.pokemons
+        pokemons.forEach((pokemon) => {
+            const listTemplate =  `
+            <li> ${pokemon.nickname} (${pokemon.species}) <button class="release" data-pokemon-id="${pokemon.id}" >Release</button></li>
+            `
+            ul.innerHTML += listTemplate
+            })  
+        })
+    }
+
+    function listenEvents() {
+        main.addEventListener("click", function(event) {
+            const releaseBtn = event.target.className === 'release'
+            const addBtn = event.target.className === 'add'
+
+            if (releaseBtn) {
+                releasePokemon(event)
+            } else if (addBtn) {
+                addPokemon(event)
+            }
+        })
+          
+    }
+
+    function releasePokemon(e) {
+        let configObj = {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+          }
+        const pokemonId = parseInt(event.target.dataset.pokemonId)
+        let deleteURL = POKEMONS_URL + `/${pokemonId}`
+        event.target.parentElement.remove()
+        fetch(deleteURL, configObj)
+        .then(function(response) {
+          return response.json()
+        })
+        .catch(function(error) {
+          main.innerHTML = error.message
+        })  
+    }
+
+    function addPokemon(e) {
+        const teamLength = e.target.parentNode.querySelectorAll("#ul_poke li").length
+
+        if (teamLength >= 6) {
+            alert("Maximum team size limit exceeded!");
+        } else {
+
+        let ul = e.target.parentNode.querySelector('ul')
+        trainerId = e.target.dataset.trainerId
+
+        let configObj = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            "trainer_id": trainerId
+          })
+        }
+      
+        fetch(POKEMONS_URL, configObj)
+        .then(function(response) {
+          return response.json()
+        })
+        .then(function(pokemon) {
+            // Build pokemon li 
+            const list =  `
+            <li> ${pokemon.nickname} (${pokemon.species}) <button class="release" data-pokemon-id="${pokemon.id}" >Release</button></li>
+            `
+            ul.innerHTML += list
+        })  
+        .catch(function(error) {
+          main.innerHTML = error.message
+        }) 
+        }
+    }
+
+    function test(object) {
+        console.log(object.nickname)
     }
 
     // start by rendering Trainers
     getTrainers()
+
+    // listen events
+    listenEvents()
+
+
 })    
 
 
