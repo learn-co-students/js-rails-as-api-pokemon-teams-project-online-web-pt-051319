@@ -16,20 +16,16 @@ function loadTrainers(TRAINERS_URL) {
 function renderTrainers(json) {
   const main = document.querySelector('main')
   json.data.forEach(trainer => {
-    // const card = main.createElement('div')
     const card = document.createElement("div");
     card.classList.add("card")
-    card.innerHTML = `<p>${trainer.attributes.name}</p>`
+    card.setAttribute("data-id", `${trainer.id}`)
+    card.innerHTML = `<p>${trainer.attributes.name}</p>
+    <button data-trainer-id="${trainer.id}">Add Pokemon</button>`
     main.appendChild(card)
+    const ul = document.createElement("ul")
+    card.appendChild(ul)
   })
 }
-
-// function addPokemonButton() {
-//   const btn = document.createElement("button");
-//   btn.innerHTML = "Add Pokemon";
-//   const card = document.querySelector("div");
-//   card.appendChild(btn)
-// }
 
 function loadPokemon(POKEMONS_URL) {
   fetch(POKEMONS_URL)
