@@ -19,10 +19,17 @@ function renderTrainers(json) {
     // const card = main.createElement('div')
     const card = document.createElement("div");
     card.classList.add("card")
-    card.innerHTML = `<h2>${trainer.attributes.name}</h2>`
+    card.innerHTML = `<p>${trainer.attributes.name}</p>`
     main.appendChild(card)
   })
 }
+
+// function addPokemonButton() {
+//   const btn = document.createElement("button");
+//   btn.innerHTML = "Add Pokemon";
+//   const card = document.querySelector("div");
+//   card.appendChild(btn)
+// }
 
 function loadPokemon(POKEMONS_URL) {
   fetch(POKEMONS_URL)
