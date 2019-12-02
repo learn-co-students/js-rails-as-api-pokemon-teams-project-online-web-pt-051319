@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // listenAddButtons();
   // listenReleaseButtons();
   // loadPokemon(POKEMONS_URL);
-  setTimeout(() => loadPokemon(POKEMONS_URL), 500)
-  setTimeout(() => listenAddButtons(), 500)
+  setTimeout(() => loadPokemon(POKEMONS_URL), 200)
+  // setTimeout(() => listenAddButtons(), 500)
   setTimeout(() => listenReleaseButtons(), 600)
 });
 
@@ -26,7 +26,7 @@ function renderTrainers(json) {
     card.classList.add("card")
     card.setAttribute("data-id", `${trainer.id}`)
     card.innerHTML = `<p>${trainer.attributes.name}</p>
-    <button class="add" data-trainer-id="${trainer.id}">Add Pokemon</button>`
+    <button class="add" onClick=addPokemon(${trainer.id}) data-trainer-id="${trainer.id}">Add Pokemon</button>`
     main.appendChild(card)
     const ul = document.createElement("ul")
     card.appendChild(ul)
@@ -52,14 +52,23 @@ function renderPokemon(json) {
   })
 }
 
-function listenAddButtons() {
-  const addBtns = document.querySelectorAll('button.add');
-  addBtns.forEach(btn => {
-    btn.addEventListener('click', function(event) {
-    alert('clicked!');
-  });
-  })
+// function listenAddButtons() {
+//   const addBtns = document.querySelectorAll('button.add');
+//   addBtns.forEach(btn => {
+//     btn.addEventListener('click', function(event) {
+//     alert('Clicked!');
+//   });
+//   })
+// };
+
+function addPokemon(trainerId) {
+  console.log(`${trainerId}`)
+  // debugger;
 };
+
+function sendPokemon() {
+  
+}
 
 function listenReleaseButtons() {
   const releaseBtns = document.querySelectorAll('button.release');
@@ -68,4 +77,8 @@ function listenReleaseButtons() {
     alert('clicked!');
     });
   })
+};
+
+function releasePokemon() {
+
 };

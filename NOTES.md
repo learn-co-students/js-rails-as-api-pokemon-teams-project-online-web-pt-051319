@@ -24,3 +24,7 @@ fetch('http://localhost:3000/trainers')
           <li>Rod (Beedrill) <button class="release" data-pokemon-id="151">Release</button></li>
         </ul>
       </div>
+
+      alert('clicked!')
+
+      event.path[""0""].dataset.trainerId
