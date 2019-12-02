@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // listenAddButtons();
   // listenReleaseButtons();
   // loadPokemon(POKEMONS_URL);
-  setTimeout(() => loadPokemon(POKEMONS_URL), 200)
+  setTimeout(() => loadPokemon(POKEMONS_URL), 1000)
   // setTimeout(() => listenAddButtons(), 500)
-  setTimeout(() => listenReleaseButtons(), 600)
+  // setTimeout(() => listenReleaseButtons(), 600)
 });
 
 function loadTrainers(TRAINERS_URL) {
@@ -47,7 +47,7 @@ function renderPokemon(json) {
     ul = document.createElement("ul")
     container.appendChild(ul)
     li = document.createElement("li")
-    li.innerHTML = `<li>${pokemon.attributes.nickname} (${pokemon.attributes.species}) <button class="release" data-pokemon-id="${pokemon.id}">Release</button></li>`
+    li.innerHTML = `<li>${pokemon.attributes.nickname} (${pokemon.attributes.species}) <button class="release" onClick=releasePokemon(${pokemon.id}) data-pokemon-id="${pokemon.id}">Release</button></li>`
     ul.appendChild(li)
   })
 }
@@ -63,22 +63,53 @@ function renderPokemon(json) {
 
 function addPokemon(trainerId) {
   console.log(`${trainerId}`)
+  const trainerData = {
+    trainer_id: `${trainerId}`
+  }
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(trainerData)
+  };
   // debugger;
+  fetch(POKEMONS_URL, options)
+    .then(response => console.log(response))
+    .then(object => console.log(object));
+    document.location.reload();
+    // loadPokemon(TRAINERS_URL);
 };
 
-function sendPokemon() {
-  
-}
+// function sendPokemon() {
 
-function listenReleaseButtons() {
-  const releaseBtns = document.querySelectorAll('button.release');
-  releaseBtns.forEach(btn => {
-    btn.addEventListener('click', function(event) {
-    alert('clicked!');
-    });
-  })
-};
+// }
 
-function releasePokemon() {
+// function listenReleaseButtons() {
+//   const releaseBtns = document.querySelectorAll('button.release');
+//   releaseBtns.forEach(btn => {
+//     btn.addEventListener('click', function(event) {
+//     alert('clicked!');
+//     });
+//   })
+// };
 
+function releasePokemon(pokemonId) {
+  console.log(`${pokemonId}`)
+  const pokeId = {
+    pokemon_id: `${pokemonId}`
+  }
+  const options = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(pokeId)
+  };
+  fetch(`http://localhost:3000/pokemons/${pokemonId}`, options)
+    .then(response => console.log(response))
+    .then(object => console.log(object));
+    document.location.reload();
 };
